@@ -1,0 +1,30 @@
+$primary-color: #FF4F8B;
+  $secondary-color: #F2F2F2;
+  $dark-gray: #4A4A4A;
+  $light-gray: #D9D9D9;
+  $white: #FFFFFF;
+
+  body {
+    font-family: Arial, sans-serif;
+    background-color: $secondary-color;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .btn {
+    background-color: $primary-color;
+    color: $white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
