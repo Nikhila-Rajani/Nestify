@@ -15,8 +15,8 @@ interface MessageResponse {
 export const login = (email: string, password: string): Promise<AxiosResponse<AuthResponse>> =>
   api.post('/login', { email, password });
 
-export const signup = (email: string, password: string, fullName: string): Promise<AxiosResponse<AuthResponse>> =>
-  api.post('/signup', { email, password, fullName });
+export const signup = (email: string, password: string, fullName: string,mobile_no:string): Promise<AxiosResponse<AuthResponse>> =>
+  api.post('/signup', { email, password, fullName ,mobile_no});
 
 export const verifyOTP = (email: string, otp: string): Promise<AxiosResponse<AuthResponse>> =>
   api.post('/verify-otp', { email, otp });

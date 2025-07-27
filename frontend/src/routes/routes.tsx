@@ -1,20 +1,22 @@
-import React from 'react';
-import { Route, Routes } from 'react-router-dom';
-import Login from '../pages/Login';
-import Signup from '../pages/SignUp';
-import ForgotPassword from '../pages/ForgotPassword';
-import ResetPassword from '../pages/ResetPassword';
 
-const AppRoutes = () => {
-    return (
-        <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-        </Routes>
-    );
-};
+import { Route } from 'react-router-dom';
+import Home from '../pages/user/Home';
+import { ProtectedLogin } from '../components/user/LoginProtected';
+import { UserProtected } from '../components/user/UserProtected';
 
-export default AppRoutes;
+
+export const routes = (
+
+    <>
+        {/* common */}
+        <Route path="/login" element={<ProtectedLogin />} />
+
+        {/* user */}
+        <Route element={<UserProtected />}>
+            <Route path="/" element={<Home />} />
+        </Route>
+        {/* <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} /> */}
+    </>
+);

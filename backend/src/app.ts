@@ -1,36 +1,57 @@
+// Import:
 import express from 'express';
-  import mongoose from 'mongoose';
-  import dotenv from 'dotenv';
-  import cors from 'cors';
-  import authRoutes from './routes/authRoutes';
-  import { Request, Response, NextFunction } from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import { Request, Response, NextFunction } from 'express';
+import cookieParser from 'cookie-parser'
+import morgan from 'morgan'
+
+// ROUTES:
+import UserRoute from './routes/userRoutes';
+import adminRoute from './routes/adminRoutes';
+import hostRoute from './routes/hostRoutes';
+import otpRoute from './routes/otpRoutes';
+
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Cors initalisation
+const corsOptions = {
+  origin: ['http://localhost:5173'],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  Credential: true
+}
+
+// Middleware
+app.use(cors(corsOptions));
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true}))
+app.use(express.json());
+app.use(morgan('dev'))
+
+// Routes
+app.use('/v1/user', UserRoute)
+app.use('/v1/admin', adminRoute)
+app.use('/v1/host', hostRoute)
+app.use('/v1/user/otp', otpRoute)
+
+app.use('*',(req,res)=> {
+  res.status(404).json({message:"Endpoint not found"})
+})
 
 
-  dotenv.config();
-
-  const app = express();
-  const PORT = process.env.PORT || 5000;
-
-  // Middleware
-  app.use(cors());
-  app.use(express.json());
-
-  // Routes
-  app.use('/v1/auth', authRoutes);
-
-  // Error handling middleware
-  app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    console.error(err.stack);
-    res.status(500).json({ message: 'Something went wrong!' });
-  });
-
-  // MongoDB connection
-  mongoose.connect(process.env.MONGODB_URI as string)
-    .then(() => console.log('MongoDB connected successfully'))
-    .catch((err) => console.error('MongoDB connection error:', err));
-
-  app.listen(PORT, () => {
+app.listen(PORT, (error?:Error) => {
+  if(!error){
     console.log(`Nestify backend running on port ${PORT}`);
-  });
+  }else{
+    console.error("Server Error :", error.message);
+    
+  }
+  
+});
 
-  export default app;
+export default app;

@@ -1,105 +1,115 @@
 import { Request, Response, NextFunction } from 'express';
-  import UserRepository from '../repositories/userRepository';
-  import userModel, { IUser } from '../models/userModel';
-  import { generateOTP } from '../utils/otpUtils';
+import { IUserServiceInterface } from '../interfaces/user/IuserServiceInterface';
+import { AppError } from '../utils/AppError';
+import { HttpStatus } from '../constants/HttpStatus';
+import { MessageConstants } from '../constants/MessageConstants';
+import { CookieManager } from '../utils/CookieManager';
+import { sendResponse } from '../utils/responseUtilities';
 
-  const userRepository = new UserRepository(userModel);
+  export class UserController{
+    constructor(private _userService : IUserServiceInterface){
 
-  export const login = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      console.log("its inside the login");
-      
+    }
+    async login (req: Request, res: Response) : Promise <void> {
       const { email, password } = req.body;
-      const user = await userRepository.findByEmail(email) as IUser | null;
-      if (!user || user.password !== password) {
-        return res.status(401).json({ message: 'Invalid credentials' });
+      if(!email||!password){
+        throw new AppError (HttpStatus.BadRequest,MessageConstants.REQUIRED_FIELDS_MISSING)
       }
-      res.status(200).json({ message: 'Login successful', token: 'temp-token', user: { email: user.email, role: user.role } });
-    } catch (error) {
-      next(error);
-    }
-  };
+      const {user,accessToken,refreshToken} = await this._userService.authenticateUser(email,password)
+      CookieManager.setAuthCookies(res,{accessToken,refreshToken})
+      sendResponse(res,HttpStatus.OK,MessageConstants.LOGIN_SUCCESS , {user: { email: user.email, role: user.role },accessToken,refreshToken})
 
-  export const signup = async (req: Request, res: Response, next: NextFunction) => {
-    console.log("signuppp");
-    
-    try {
-      console.log("signuppp at try");
-      const { email, password, fullName } = req.body;
-      const existingUser = await userRepository.findByEmail(email) as IUser | null;
-      if (existingUser) {
-        return res.status(400).json({ message: 'Email already exists' });
-      }
-      const otp = generateOTP();
-      console.log(`Generated OTP for ${email}: ${otp}`);
-      const user = await userRepository.create({ email, password, fullName, otp }) as IUser;
-      res.status(201).json({ message: 'User created, please verify OTP', user: { email: user.email } });
-    } catch (error) {
-      next(error);
     }
-  };
 
-  export const verifyOTP = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      console.log("its verify otp");
-      const { email, otp } = req.body;
-      const user = await userRepository.findByEmail(email) as IUser | null;
-      if (!user || user.otp !== otp) {
-        return res.status(400).json({ message: 'Invalid OTP' });
-      }
-      await userRepository.update(email, { otp: null, isVerified: true });
-      res.status(200).json({ message: 'OTP verified', token: 'temp-token', user: { email: user.email, role: user.role } });
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  export const resendOTP = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { email } = req.body;
-      const user = await userRepository.findByEmail(email) as IUser | null;
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      const otp = generateOTP();
-      console.log("resend otp isss",otp);
+    async signup (req:Request,res:Response) : Promise <void> {
+      try {
+        const {fullName,email,password,mobile_no} = req.body
+        const newUser = await this._userService.registerUser(
+        fullName,
+        email,
+        password,
+        mobile_no
+        )
+        sendResponse(res,HttpStatus.OK,MessageConstants.REGISTER_SUCCESFUL, { user: {
+          id: newUser._id,
+          fullName: newUser.fullName,
+          email: newUser.email,
+          mobile_no: newUser.mobile_no,
+        }})
       
-      await userRepository.update(email, { otp });
-      res.status(200).json({ message: 'OTP resent', email });
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { email } = req.body;
-      const user = await userRepository.findByEmail(email) as IUser | null;
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+      } catch (error:any) {
+        console.log(error.message);
+      res
+        .status(500)
+        .json({ message: "Internal Server Error", error: error.message });
       }
-      const otp = generateOTP();
-      console.log("forotpasss otp isss",otp);
-      await userRepository.update(email, { otp });
-      res.status(200).json({ message: 'OTP sent for password reset', email });
-    } catch (error) {
-      next(error);
     }
-  };
 
-  export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { email, otp, newPassword } = req.body;
-      const user = await userRepository.findByEmail(email) as IUser | null;
-      if (!user || user.otp !== otp) {
-        return res.status(400).json({ message: 'Invalid OTP' });
-      }
-      await userRepository.update(email, { password: newPassword, otp: null });
-      res.status(200).json({ message: 'Password reset successful', token: 'temp-token', email });
-    } catch (error) {
-      next(error);
-    }
-  };
+  }
+
+  
+
+  // export const verifyOTP = async (req: Request, res: Response, next: NextFunction) => {
+  //   try {
+  //     console.log("its verify otp");
+  //     const { email, otp } = req.body;
+  //     const user = await userRepository.findByEmail(email) as IUser | null;
+  //     if (!user || user.otp !== otp) {
+  //       return res.status(400).json({ message: 'Invalid OTP' });
+  //     }
+  //     await userRepository.update(email, { otp: null, isVerified: true });
+  //     res.status(200).json({ message: 'OTP verified', token: 'temp-token', user: { email: user.email, role: user.role } });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // };
+
+  // export const resendOTP = async (req: Request, res: Response, next: NextFunction) => {
+  //   try {
+  //     const { email } = req.body;
+  //     const user = await userRepository.findByEmail(email) as IUser | null;
+  //     if (!user) {
+  //       return res.status(404).json({ message: 'User not found' });
+  //     }
+  //     const otp = generateOTP();
+  //     console.log("resend otp isss",otp);
+      
+  //     await userRepository.update(email, { otp });
+  //     res.status(200).json({ message: 'OTP resent', email });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // };
+
+  // export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+  //   try {
+  //     const { email } = req.body;
+  //     const user = await userRepository.findByEmail(email) as IUser | null;
+  //     if (!user) {
+  //       return res.status(404).json({ message: 'User not found' });
+  //     }
+  //     const otp = generateOTP();
+  //     console.log("forotpasss otp isss",otp);
+  //     await userRepository.update(email, { otp });
+  //     res.status(200).json({ message: 'OTP sent for password reset', email });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // };
+
+  // export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+  //   try {
+  //     const { email, otp, newPassword } = req.body;
+  //     const user = await userRepository.findByEmail(email) as IUser | null;
+  //     if (!user || user.otp !== otp) {
+  //       return res.status(400).json({ message: 'Invalid OTP' });
+  //     }
+  //     await userRepository.update(email, { password: newPassword, otp: null });
+  //     res.status(200).json({ message: 'Password reset successful', token: 'temp-token', email });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // };
 
   // export const loginWithGoogle = async (req: Request, res: Response, next: NextFunction) => {
   //   try {

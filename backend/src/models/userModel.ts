@@ -5,6 +5,7 @@ import mongoose, { Document, ObjectId, Schema } from 'mongoose';
     email: string;
     password: string;
     fullName: string;
+    mobile_no : string
     role: 'user' | 'admin' | 'host';
     status: 'active' | 'blocked';
     isBlocked: boolean;
@@ -19,6 +20,7 @@ import mongoose, { Document, ObjectId, Schema } from 'mongoose';
       email: { type: String, required: true, unique: true },
       password: { type: String, required: true },
       fullName: { type: String, required: true },
+      mobile_no : {type :String, required:true},
       role: { type: String, enum: ['user', 'admin', 'host'], default: 'user' },
       status: { type: String, enum: ['active', 'blocked'], default: 'active' },
       isBlocked: { type: Boolean, default: false },
