@@ -1,8 +1,7 @@
 
-import { getUsers, blockUser, unblockUser } from '../controllers/adminController';
 import { UserController } from '../controllers/userController';
 import { UserService } from '../services/user/userService';
-import UserRepository from '../repositories/userRepository';
+import UserRepository from '../repositories/user/userRepository';
 import express,{ Router, Request, Response } from 'express';
 
 

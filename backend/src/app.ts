@@ -11,7 +11,7 @@ import morgan from 'morgan'
 import UserRoute from './routes/userRoutes';
 import adminRoute from './routes/adminRoutes';
 import hostRoute from './routes/hostRoutes';
-import otpRoute from './routes/otpRoutes';
+import otpRoute from './routes/common/otpRoutes';
 
 dotenv.config();
 
@@ -39,10 +39,13 @@ app.use('/v1/admin', adminRoute)
 app.use('/v1/host', hostRoute)
 app.use('/v1/user/otp', otpRoute)
 
-app.use('*',(req,res)=> {
-  res.status(404).json({message:"Endpoint not found"})
-})
+// app.use('*',(req,res)=> {
+//   res.status(404).json({message:"Endpoint not found"})
+// })
 
+app.use((req, res) => {
+  res.status(404).json({ message: "Endpoint not found" });
+});
 
 app.listen(PORT, (error?:Error) => {
   if(!error){

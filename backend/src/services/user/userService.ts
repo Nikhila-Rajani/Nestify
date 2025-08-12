@@ -6,7 +6,7 @@ import { AppError } from "../../utils/AppError";
 import { HttpStatus } from "../../constants/HttpStatus";
 import { MessageConstants } from "../../constants/MessageConstants";
 import { IUser } from "../../models/userModel";
-import { Signup } from "../../interfaces/SignUpInterface";
+import { Signup } from "../../interfaces/user/SignUpInterface";
 
 export class UserService implements IUserServiceInterface {
 

@@ -1,10 +1,10 @@
 import type { Dispatch } from "redux";
-import { createApiInstances } from "../axios/axiosServices";
 import { setError, setLoading, setUser } from "../Redux/User/userSlice";
 import type { ILoginResponse } from "../Types/authTypes";
 import { setOtpExpired, setOtpSent, setOtpVerified } from "../Redux/Otp/OtpSlice";
+import api from "../axios/userInstances";
 
-const api = createApiInstances('user')
+
 
 export const loginUser = async (
   email: string,
@@ -50,6 +50,8 @@ export const loginUser = async (
 
 export const sendOtp = async (email:string,dispatch:Dispatch):Promise<{success:boolean,message:string}> => {
   try {
+    console.log("insidee....sendOTP");
+    console.log("Base URL:", import.meta.env.VITE_Base_Url_User);
     dispatch(setLoading())
     const response = await api.post('/otp/send',{email})
     dispatch(setOtpSent(email))

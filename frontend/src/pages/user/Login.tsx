@@ -124,7 +124,7 @@ const Login: React.FC = () => {
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome Back</h2>
           <div className="flex items-center gap-2 mb-6">
             <span className="text-gray-600">Short Name an account</span>
-            <a href="#" className="text-blue-500 hover:text-blue-700 font-medium">Sign Up</a>
+            <a href="/signup" className="text-blue-500 hover:text-blue-700 font-medium">Sign Up</a>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">

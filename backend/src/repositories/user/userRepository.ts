@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import User,{ IUser } from '../models/userModel';
-import { IUserRepositoryInterface } from '../interfaces/user/IuserRepositoryInterface';
+import User,{ IUser } from '../../models/userModel';
+import { IUserRepositoryInterface } from '../../interfaces/user/IuserRepositoryInterface';
 
 
   class UserRepository implements IUserRepositoryInterface {

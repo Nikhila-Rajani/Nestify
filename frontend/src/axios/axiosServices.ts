@@ -18,7 +18,7 @@ const getBaseUrl = (role: Role): string => {
         case "user":
             return import.meta.env.VITE_Base_Url_User;
         case "host":
-            return import.meta.env.VITE_Base_Url_Doctor;
+            return import.meta.env.VITE_Base_Url_Host;
         case "admin":
             return import.meta.env.VITE_Base_Url_Admin;
         default:
