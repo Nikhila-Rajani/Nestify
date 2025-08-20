@@ -6,6 +6,7 @@ import cors from 'cors';
 import { Request, Response, NextFunction } from 'express';
 import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
+import { connectDB } from './Database/dB';
 
 // ROUTES:
 import UserRoute from './routes/userRoutes';
@@ -23,8 +24,11 @@ const corsOptions = {
   origin: ['http://localhost:5173'],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  Credential: true
+  credentials: true
 }
+
+// DB connection
+connectDB();
 
 // Middleware
 app.use(cors(corsOptions));

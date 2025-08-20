@@ -1,5 +1,5 @@
 import type { Dispatch } from "redux";
-import { setError, setLoading, setUser } from "../Redux/User/userSlice";
+import { setError,  setLoadingAction, setUser } from "../Redux/User/userSlice";
 import type { ILoginResponse } from "../Types/authTypes";
 import { setOtpExpired, setOtpSent, setOtpVerified } from "../Redux/Otp/OtpSlice";
 import api from "../axios/userInstances";
@@ -12,7 +12,7 @@ export const loginUser = async (
   dispatch: any
 ): Promise<{ success: boolean; message?: string }> => {
   try {
-    dispatch(setLoading());
+    dispatch(setLoadingAction());
 
     const response = await api.post<ILoginResponse>(
       "/login",
@@ -52,7 +52,7 @@ export const sendOtp = async (email:string,dispatch:Dispatch):Promise<{success:b
   try {
     console.log("insidee....sendOTP");
     console.log("Base URL:", import.meta.env.VITE_Base_Url_User);
-    dispatch(setLoading())
+    dispatch(setLoadingAction())
     const response = await api.post('/otp/send',{email})
     dispatch(setOtpSent(email))
     return {success:true,message:response.data.message||"OTP send successfully"}
@@ -75,8 +75,8 @@ export const registerUser = async (
   dispatch: any
 ) => {
   try {
-    dispatch(setLoading());
-    const response = await api.post("/register", userData);
+    dispatch(setLoadingAction());
+    const response = await api.post("/signUp", userData);
     return response.data;
   } catch (error) {
     console.error("Error registering user:", error);
@@ -96,7 +96,7 @@ export const verifyOtp = async (
     expired?: boolean;
   }> => {
     try {
-      dispatch(setLoading());
+      dispatch(setLoadingAction());
       await api.post('/otp/verify', { email, otp });
       dispatch(setOtpVerified());
       return {
@@ -129,7 +129,7 @@ export const verifyOtp = async (
     dispatch: any
   ): Promise<{ success: boolean; message: string }> => {
     try {
-      dispatch(setLoading());
+      dispatch(setLoadingAction());
       
       const response = await api.post('/otp/send', { email });
       

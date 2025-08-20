@@ -17,6 +17,13 @@ userRoute.post('/login',(req:Request,res:Response) =>{
 userRoute.post('/signUp',(req:Request,res:Response)=>{
   userController.signup(req,res)
 })
+userRoute.post('/google',(req:Request,res: Response) => {
+  userController.googleSignIn(req,res)
+})
+userRoute.post('/logout',(req:Request,res:Response)=> {
+  userController.logout(req,res)
+})
+
 
 // router.post('/login', wrapAsync(login));
 // router.post('/signup', wrapAsync(signup));

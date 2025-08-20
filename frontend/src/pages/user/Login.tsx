@@ -4,7 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../Api/userApi';
 import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowRight, Loader2} from 'lucide-react'
+import { ArrowRight, Loader2, User} from 'lucide-react'
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth"
+import api from '../../axios/userInstances';
+import { setLoadingAction, setUser} from '../../Redux/User/userSlice';
+import type { IGoogleSignInResponse } from '../../Types/authTypes';
+import app from "../../fireBaseAuthentication/config"
 
 
 
@@ -15,6 +20,7 @@ const Login: React.FC = () => {
   const [error, setError] = useState({ email: "", password: "" })
   const [message, setMessage] = useState("")
   const [loading, setLoading] = useState(false)
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -59,47 +65,49 @@ const Login: React.FC = () => {
     setLoading(false)
   }
 
-  // const handleGoogleSignIn = async () => {
-  //   const auth = getAuth(App)
-  //   const provider = new GoogleAuthProvider()
 
-  //   try {
-  //     setIsGoogleLoading(true)
-  //     dispatch(setLoading())
+  const handleGoogleSignIn = async () => {
+    const auth = getAuth(app)
+    const provider = new GoogleAuthProvider()
 
-  //     const result = await signInWithPopup(auth, provider)
-  //     const idToken = await result.user.getIdToken()
+    try {
+      setIsGoogleLoading(true)
+      dispatch(setLoadingAction())
 
-  //     const response: any = await api.post<IGoogleSignInResponse>("/google", { idToken }, { withCredentials: true })
+      const result = await signInWithPopup(auth, provider)
+      const idToken = await result.user.getIdToken()
 
-  //     const { user, accessToken, refreshToken } = response.data?.data
+      const response: any = await api.post<IGoogleSignInResponse>("/google", { idToken }, { withCredentials: true })
 
-  //     if (user) {
-  //       dispatch(
-  //         setUser({
-  //           id: user.id || "",
-  //           name: user.name || "",
-  //           email: user.email || "",
-  //           mobile_no: user.mobile_no || "",
-  //           accessToken,
-  //           refreshToken,
-  //         }),
-  //       )
+      const { user, accessToken, refreshToken } = response.data.data
 
-  //       toast.success("Google Sign-In successful!")
-  //       navigate("/")
-  //     } else {
-  //       throw new Error("Invalid user data received")
-  //     }
-  //   } catch (error: any) {
-  //     console.error("Google Sign-In Error:", error)
-  //     const errorMessage = error.response?.data?.message || "Google Sign-In failed. Please try again."
-  //     dispatch(setError(errorMessage))
-  //     toast.error(errorMessage)
-  //   } finally {
-  //     setIsGoogleLoading(false)
-  //   }
-  // }
+      if (user) {
+        dispatch(
+          setUser({
+            _id: user.id || "",
+            fullName: user.name || "",
+            email: user.email || "",
+            mobile_no: user.mobile_no || "",
+            accessToken,
+            refreshToken,
+          }),
+        )
+
+        toast.success("Google Sign-In successful!")
+        navigate("/")
+      } else {
+        throw new Error("Invalid user data received")
+      }
+    } catch (error: any) {
+      console.error("Google Sign-In Error:", error)
+      const errorMessage = error.response?.data?.message || "Google Sign-In failed. Please try again."
+      setError({ email: errorMessage, password: "" })
+
+      toast.error(errorMessage)
+    } finally {
+      setIsGoogleLoading(false)
+    }
+  }
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
@@ -211,10 +219,9 @@ const Login: React.FC = () => {
           </motion.div>
 
           {/* Social Login & Register */}
-          {/* <motion.div variants={itemVariants} className="space-y-4">
+          <motion.div variants={itemVariants} className="space-y-4">
             <motion.button
               onClick={handleGoogleSignIn}
-              disabled={isGoogleLoading}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="w-full bg-white border-2 border-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
@@ -256,7 +263,7 @@ const Login: React.FC = () => {
               <User className="w-5 h-5" />
               Create New Account
             </motion.button>
-          </motion.div> */}
+          </motion.div>
 
           {/* Error Message */}
           <AnimatePresence>

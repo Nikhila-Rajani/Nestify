@@ -4,7 +4,9 @@ import { AppError } from '../utils/AppError';
 import { HttpStatus } from '../constants/HttpStatus';
 import { MessageConstants } from '../constants/MessageConstants';
 import { CookieManager } from '../utils/CookieManager';
-import { sendResponse } from '../utils/responseUtilities';
+import { sendError, sendResponse } from '../utils/responseUtilities';
+import { googleUserData } from '../Types/types';
+import admin from '../config/fireBase';
 
   export class UserController{
     constructor(private _userService : IUserServiceInterface){
@@ -39,9 +41,71 @@ import { sendResponse } from '../utils/responseUtilities';
       
       } catch (error:any) {
         console.log(error.message);
-      res
-        .status(500)
-        .json({ message: "Internal Server Error", error: error.message });
+        sendError(res,HttpStatus.INTERNAL_SERVER_ERROR,MessageConstants.INTERNAL_SERVER_ERROR)
+      
+      }
+    }
+
+    async googleSignIn(req: Request, res: Response): Promise<void> {
+    try {
+      const { idToken } = req.body;
+      if (!idToken) {
+        sendResponse(
+          res,
+          HttpStatus.BadRequest,
+          MessageConstants.ID_TOKEN_REQUIRED
+        );
+      }
+
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+
+      const userData: googleUserData = {
+        uid: decodedToken.uid,
+        email: decodedToken.email!,
+        email_verified: decodedToken.email_verified!,
+        name: decodedToken.name || "Unknown",
+      };
+
+      const { user, accessToken, refreshToken } =
+        await this._userService.googleSignIn(userData);
+      CookieManager.setAuthCookies(res, { accessToken, refreshToken });
+      const responseData = {
+        user: { id: user._id, name: user.fullName, email: user.email },
+        accessToken,
+        refreshToken,
+      };
+      sendResponse(
+        res,
+        HttpStatus.OK,
+        MessageConstants.GOOGLE_SIGNIN_SUCCESS,
+        responseData
+      );
+    } catch (error: any) {
+      sendError(
+        res,
+        HttpStatus.InternalServerError,
+        MessageConstants.GOOGLE_SIGNIN_FAILED
+      );
+    }
+  }
+
+
+    async logout (req:Request,res:Response) : Promise <void> {
+      try {
+        res.clearCookie("accessToken",{
+          httpOnly:true,
+          secure:false,
+        });
+        res.clearCookie("refreshToken",{
+          httpOnly:true,
+          secure :false
+        });
+
+        sendResponse(res,HttpStatus.OK,MessageConstants.SIGNOUT_SUCCESFUL)
+      } catch (error:any) {
+        console.error(error.message);
+        sendError(res,HttpStatus.INTERNAL_SERVER_ERROR,MessageConstants.INTERNAL_SERVER_ERROR)
+      
       }
     }
 

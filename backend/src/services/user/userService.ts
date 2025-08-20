@@ -7,6 +7,7 @@ import { HttpStatus } from "../../constants/HttpStatus";
 import { MessageConstants } from "../../constants/MessageConstants";
 import { IUser } from "../../models/userModel";
 import { Signup } from "../../interfaces/user/SignUpInterface";
+import { googleUserData } from "../../Types/types";
 
 export class UserService implements IUserServiceInterface {
 
@@ -56,7 +57,42 @@ export class UserService implements IUserServiceInterface {
         return await this._userRepo.create(userData)
     }
 
+    async googleSignIn(
+        userData: googleUserData
+    ): Promise<{ user: IUser; accessToken: string; refreshToken: string }> {
+        const existingUser = await this._userRepo.findByEmail(userData.email);
+        if (existingUser) {
+            const accessToken = generateAccessToken({
+                id: existingUser._id.toString(),
+                role: "user",
+                email: existingUser.email,
+            });
+            const refreshToken = generateRefreshToken({
+                id: existingUser._id.toString(),
+                role: "user",
+            });
+            return { user: existingUser, accessToken, refreshToken };
+        }
 
+        const newUser = await this._userRepo.create({
+            email: userData.email,
+            fullName: userData.name || "Unknown",
+            mobile_no: "",
+            google_id: userData.uid,
+            isVerified: true,
+            isBlocked: false,
+        });
+        const accessToken = generateAccessToken({
+            id: newUser._id.toString(),
+            role: "user",
+            email: newUser.email,
+        });
+        const refreshToken = generateRefreshToken({
+            id: newUser._id.toString(),
+            role: "user",
+        });
+        return { user: newUser, accessToken, refreshToken };
+    }
 }
 
 

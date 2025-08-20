@@ -6,7 +6,7 @@ export interface IUser {
     mobile_no: string
     role?: 'user' | 'admin' | 'host';
     status?: 'active' | 'blocked';
-    isBlocked: boolean;
+    isBlocked?: boolean;
     isVerified?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
@@ -30,4 +30,10 @@ export interface ILoginResponse {
   password: string;
   confirmPassword: string;
   mobile_no: string;
+}
+
+export interface IGoogleSignInResponse {
+  status: number;
+  message: string;
+  data: IUser;
 }

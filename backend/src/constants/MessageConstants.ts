@@ -10,5 +10,9 @@ export const MessageConstants = {
     EMAIL_AND_REQUIRED : "Email and Otp are required",
     INVALID_OTP : "Invalid OTP",
     OTP_VERIFIED : "Otp verified and user registerd successfully",
-    OTP_RESEND :"Otp resend Successfully"
+    OTP_RESEND :"Otp resend Successfully",
+    SIGNOUT_SUCCESFUL : "Logout Successfully",
+    ID_TOKEN_REQUIRED : "Id token required",
+    GOOGLE_SIGNIN_SUCCESS : "Google SignIn success",
+    GOOGLE_SIGNIN_FAILED : "Google SignIn Failed"
 }
