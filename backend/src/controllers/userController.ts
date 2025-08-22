@@ -89,6 +89,80 @@ import admin from '../config/fireBase';
     }
   }
 
+  
+  async forgotPassword(req: Request, res: Response): Promise<void> {
+    try {
+      const { email } = req.body;
+      console.log("forgetemail", email);
+      if (!email) {
+        res.status(400).json({ success: false, message: "Email is required" });
+        return;
+      }
+      const response = await this._userService.forgotPasswordVerify(email);
+      if (response.success) {
+        res.status(200).json(response);
+      } else {
+        res.status(400).json(response);
+      }
+    } catch (error: any) {
+      console.error("Error in forgotPassword controller:", error.message);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+    }
+  }
+
+    async resetPassword(req: Request, res: Response): Promise<void> {
+    try {
+      const { email, password } = req.body
+
+      // Log the received request body
+      console.log("Received request body:", req.body);
+
+      if (!email || !password) {
+        console.log("Missing email or newPassword in request body");
+        res.status(400).json({
+          success: false,
+          message: "Email and new password are required",
+        });
+        return;
+      }
+
+      console.log(`Attempting to reset password for email: ${email}`);
+
+      const response = await this._userService.resetPassword(email, password);
+
+      // Log the response from the userService
+      console.log("Response from userService.resetPassword:", response);
+
+      if (response.success) {
+        console.log(`Password successfully updated for email: ${email}`);
+        res
+          .status(200)
+          .json({ success: true, message: "Password successfully updated" });
+      } else {
+        console.log(
+          `Failed to update password for email: ${email}. Reason:`,
+          response
+        );
+        res.status(400).json(response);
+      }
+    } catch (error: any) {
+      console.error(
+        "Error in resetPassword controller:",
+        error.message,
+        error.stack
+      );
+      sendError(
+        res,
+        HttpStatus.InternalServerError,
+        MessageConstants.INTERNAL_SERVER_ERROR
+      );
+      // res
+      //   .status(500)
+      //   .json({ success: false, message: "Internal server error" });
+    }
+  }
 
     async logout (req:Request,res:Response) : Promise <void> {
       try {

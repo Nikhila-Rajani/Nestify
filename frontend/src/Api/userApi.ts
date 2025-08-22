@@ -131,7 +131,7 @@ export const verifyOtp = async (
     try {
       dispatch(setLoadingAction());
       
-      const response = await api.post('/otp/send', { email });
+      const response = await api.post('/otp/resend', { email });
       
       if (response.data.success) {
         dispatch(setOtpSent(email));

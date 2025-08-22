@@ -8,10 +8,25 @@ import { MessageConstants } from "../../constants/MessageConstants";
 import { IUser } from "../../models/userModel";
 import { Signup } from "../../interfaces/user/SignUpInterface";
 import { googleUserData } from "../../Types/types";
+import { generateOtp, hashOtp } from "../../utils/generateOtp";
+import { sentMail } from "../../utils/sentMail";
+import IOtpRepository from "../../interfaces/otp/otpRepositoryInterface";
+
+
+export interface ForgotPasswordResponse {
+    success: boolean;
+    message: string;
+    data: string | null;
+}
+
 
 export class UserService implements IUserServiceInterface {
 
-    constructor(private _userRepo: IUserRepositoryInterface) { }
+    constructor(private _userRepo: IUserRepositoryInterface,
+        private _otpRepo: IOtpRepository
+    ) { }
+
+
 
     async authenticateUser(email: string, password: string): Promise<{ user: IUser; accessToken: string; refreshToken: string }> {
         try {
@@ -92,6 +107,59 @@ export class UserService implements IUserServiceInterface {
             role: "user",
         });
         return { user: newUser, accessToken, refreshToken };
+    }
+
+    async forgotPasswordVerify(email: string): Promise<ForgotPasswordResponse> {
+        try {
+            const userData = await this._userRepo.findByEmail(email);
+            if (!userData) {
+                return { success: false, message: "Mail not registered", data: null };
+            }
+
+            const otp = generateOtp();
+            console.log("Generated otp:", otp);
+            const mailSent = await sentMail(
+                email,
+                "Forgot Password Verification",
+                `<p>Enter this code <b>${otp}</b> to verify your email for resetting the password.</p><p>This code expires in <b>2 Minutes</b></p>`
+            );
+
+            if (mailSent) {
+                const hashedOtp = await hashOtp(otp);
+                await this._otpRepo.storeOtp(hashedOtp, userData.email);
+            }
+
+            return {
+                success: true,
+                message: "Mail sent successfully",
+                data: userData.email,
+            };
+        } catch (error) {
+            console.error("Error in forgotPasswordVerify:", error);
+            return { success: false, message: "Couldn’t verify mail", data: null };
+        }
+    }
+
+    async resetPassword(
+        email: string,
+        newPassword: string
+    ): Promise<{ success: boolean; message: string }> {
+        const user = await this._userRepo.findByEmail(email);
+        if (!user) {
+            return { success: false, message: "User not found" };
+        }
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        try {
+            await this._userRepo.updatePassword(user._id.toString(), hashedPassword);
+            return { success: true, message: "Password updated successfully" };
+        } catch (error) {
+            console.error(`Error updating password for email: ${email}`, error);
+            return {
+                success: false,
+                message: "Error updating password. Please try again.",
+            };
+        }
     }
 }
 

@@ -11,7 +11,7 @@ export class OtpController {
 
     async sendOtp(req: Request, res: Response): Promise<void> {
         console.log("Request Hitting");
-        
+
         try {
             const { email } = req.body;
             if (!email) {
@@ -50,7 +50,7 @@ export class OtpController {
             const isOtpValid = await this._otpService.verifyOtp(email, otp);
 
             if (!isOtpValid) {
-                 throw new AppError(
+                throw new AppError(
                     HttpStatus.BadRequest,
                     MessageConstants.INVALID_OTP
                 );
@@ -76,7 +76,7 @@ export class OtpController {
             const { email } = req.body;
 
             if (!email) {
-               throw new AppError(
+                throw new AppError(
                     HttpStatus.BadRequest,
                     MessageConstants.EMAIL_REQUIRED
                 );
@@ -86,6 +86,33 @@ export class OtpController {
             sendResponse(res, HttpStatus.OK, MessageConstants.OTP_RESEND)
         } catch (error) {
             console.error("Controller Error:", error);
+            if (error instanceof AppError) {
+                sendError(res, error.status, error.message);
+            } else {
+                sendError(
+                    res,
+                    HttpStatus.InternalServerError,
+                    MessageConstants.INTERNAL_SERVER_ERROR
+                );
+            }
+        }
+    }
+
+    async resentOtp(req: Request, res: Response): Promise<void> {
+        try {
+            const { email } = req.body;
+
+            if (!email) {
+                throw new AppError(
+                    HttpStatus.BadRequest,
+                    MessageConstants.EMAIL_REQUIRED
+                );
+            }
+
+            await this._otpService.resentOtp(email);
+            sendResponse(res, HttpStatus.OK, MessageConstants.OTP_RESEND);
+        } catch (error) {
+            console.error("Controller Error :", error);
             if (error instanceof AppError) {
                 sendError(res, error.status, error.message);
             } else {

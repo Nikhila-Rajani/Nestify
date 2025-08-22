@@ -1,4 +1,5 @@
 import { IUser } from "../../models/userModel";
+import { ForgotPasswordResponse } from "../../services/user/userService";
 import { googleUserData } from "../../Types/types";
 
 export interface IUserServiceInterface {
@@ -12,5 +13,11 @@ export interface IUserServiceInterface {
     googleSignIn(
         userData: googleUserData
     ): Promise<{ user: IUser; accessToken: string; refreshToken: string }>
+    forgotPasswordVerify(email: string): Promise<ForgotPasswordResponse>
+     resetPassword(
+    email: string,
+    newPassword: string
+  ): Promise<{ success: boolean; message: string }>;
+
 }
 

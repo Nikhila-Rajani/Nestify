@@ -3,12 +3,14 @@ import { UserController } from '../controllers/userController';
 import { UserService } from '../services/user/userService';
 import UserRepository from '../repositories/user/userRepository';
 import express,{ Router, Request, Response } from 'express';
+import { OtpRepository } from '../repositories/common/otpRepository';
 
 
 
 const userRoute : Router = express.Router()
 const userRepository = new UserRepository()
-const userService = new UserService(userRepository)
+const otpRepository = new OtpRepository()
+const userService = new UserService(userRepository,otpRepository)
 const userController = new UserController(userService)
 
 userRoute.post('/login',(req:Request,res:Response) =>{
@@ -22,6 +24,12 @@ userRoute.post('/google',(req:Request,res: Response) => {
 })
 userRoute.post('/logout',(req:Request,res:Response)=> {
   userController.logout(req,res)
+})
+userRoute.post('/forgot-password',(req:Request,res:Response) => {
+  userController.forgotPassword(req,res)
+})
+userRoute.post('/reset-password',(req:Request,res:Response) => {
+  userController.resetPassword(req,res)
 })
 
 

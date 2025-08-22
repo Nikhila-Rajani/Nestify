@@ -1,42 +1,37 @@
-// import { Request, Response, NextFunction } from 'express';
-//   import UserRepository from '../repositories/user/userRepository';
-//   import userModel, { IUser } from '../models/userModel';
+import { HttpStatus } from "../constants/HttpStatus";
+import { MessageConstants } from "../constants/MessageConstants";
+import { AppError } from "../utils/AppError";
+import { CookieManager } from "../utils/CookieManager";
+import { sendError, sendResponse } from "../utils/responseUtilities";
 
-//   const userRepository = new UserRepository(userModel);
 
-//   export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//       const users = await userRepository.findAll() as IUser[];
-//       res.status(200).json({ users });
-//     } catch (error) {
-//       next(error);
-//     }
-//   };
+class AdminController {
+  constructor(private _adminService: IAdminService) {}
 
-//   export const blockUser = async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//       const { email } = req.body;
-//       const user = await userRepository.findByEmail(email) as IUser | null;
-//       if (!user) {
-//         return res.status(404).json({ message: 'User not found' });
-//       }
-//       await userRepository.update(email, { status: 'blocked', isBlocked: true });
-//       res.status(200).json({ message: 'User blocked', email });
-//     } catch (error) {
-//       next(error);
-//     }
-//   };
+  async login(req: Request, res: Response): Promise<void> {
+    try {
+      const { email, password } = req.body;
+      if (!email || !password) {
+        throw new AppError(
+          HttpStatus.BadRequest,
+          MessageConstants.REQUIRED_FIELDS_MISSING
+        );
+      }
 
-//   export const unblockUser = async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//       const { email } = req.body;
-//       const user = await userRepository.findByEmail(email) as IUser | null;
-//       if (!user) {
-//         return res.status(404).json({ message: 'User not found' });
-//       }
-//       await userRepository.update(email, { status: 'active', isBlocked: false });
-//       res.status(200).json({ message: 'User unblocked', email });
-//     } catch (error) {
-//       next(error);
-//     }
-//   };
+      const { admin, accessToken, refreshToken } =
+        await this._adminService.adminLogin(email, password);
+      CookieManager.setAuthCookies(res, { accessToken, refreshToken });
+      sendResponse(res, HttpStatus.OK, MessageConstants.LOGIN_SUCCESS, {
+        admin,
+        email,
+        accessToken,
+      });
+    } catch (error: any) {
+      sendError(
+        res,
+        HttpStatus.Unauthorized,
+        MessageConstants.LOGIN_FAILED || error.message
+      );
+    }
+  }
+}

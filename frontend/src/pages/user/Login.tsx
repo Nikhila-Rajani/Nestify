@@ -4,12 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../Api/userApi';
 import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowRight, Loader2, User} from 'lucide-react'
+import { ArrowRight, Loader2, User } from 'lucide-react'
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth"
 import api from '../../axios/userInstances';
-import { setLoadingAction, setUser} from '../../Redux/User/userSlice';
+import { setLoadingAction, setUser } from '../../Redux/User/userSlice';
 import type { IGoogleSignInResponse } from '../../Types/authTypes';
 import app from "../../fireBaseAuthentication/config"
+import ForgotPasswordModel from './ForgotPassword';
+
 
 
 
@@ -20,6 +22,7 @@ const Login: React.FC = () => {
   const [error, setError] = useState({ email: "", password: "" })
   const [message, setMessage] = useState("")
   const [loading, setLoading] = useState(false)
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -173,10 +176,24 @@ const Login: React.FC = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
-
-              <a href="#" className="text-sm text-blue-500 hover:text-blue-700 block text-right">Forgot password?</a>
+              <div className="flex items-center justify-between">
+                <label className="flex items-center space-x-2 text-sm text-gray-600 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <span>Remember me</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                >
+                  Forgot password?
+                </button>
+                {/* <a href="" className="text-sm text-blue-500 hover:text-blue-700 block text-right">Forgot password?</a> */}
+              </div>
             </div>
-
             {/* <div className="flex items-center">
               <input
                 type="checkbox"
@@ -284,40 +301,11 @@ const Login: React.FC = () => {
         <div className="flex-1">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-            {/* Content Cards
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Welcome</h3>
-              <p className="text-gray-600">Every time here.</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Ancient practices</h3>
-              <p className="text-gray-600">For those seeking tradition</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Grounded experience</h3>
-              <p className="text-gray-600">Generating diversity & change</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Explore</h3>
-              <p className="text-gray-600">Social pressures and more</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Creating sustainable</h3>
-              <p className="text-gray-600">Our COVID-10 business</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Innovative</h3>
-              <p className="text-gray-600">How to learn regionally</p>
-            </div> */}
+
           </div>
         </div>
       </div>
-
+      <ForgotPasswordModel show={showForgotPassword} onClose={() => setShowForgotPassword(false)} role={"user"} />
       {/* Footer */}
       <footer className="bg-white border-t border-gray-200">
         <div className="px-8 py-6 flex flex-wrap gap-6 justify-center">
@@ -330,6 +318,7 @@ const Login: React.FC = () => {
         <div className="px-8 py-4 text-center text-sm text-gray-500">
           <p>@2022 Mark Me... <a href="#" className="text-blue-500 hover:text-blue-700">Privacy</a> - <a href="#" className="text-blue-500 hover:text-blue-700">Terms</a> - <a href="#" className="text-blue-500 hover:text-blue-700">Sitemap</a></p>
         </div>
+
       </footer>
     </div>
   );
@@ -339,85 +328,4 @@ export default Login;
 
 
 
-// import React, { useState } from 'react';
-// import { Link, useNavigate } from 'react-router-dom';
-// import Input from '../components/Input';
-// import Button from '../components/Button';
-// import * as api from '../services/authAPI';
 
-// const Login = () => {
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [showPassword, setShowPassword] = useState(false);
-//   const [error, setError] = useState<string | null>(null);
-//   const navigate = useNavigate();
-
-//   const handleLogin = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     try {
-//       const res = await api.login(email, password);
-//       localStorage.setItem('token', res.data.token || 'temp-token');
-//       localStorage.setItem('role', res.data.user?.role || 'user');
-//       navigate(res.data.user?.role === 'admin' ? '/admin/users' : '/');
-//     } catch (err) {
-//       setError((err as any).response?.data?.message || 'Login failed');
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-pink-50 px-4">
-//       <div className="w-full max-w-md bg-white p-10 rounded-2xl shadow-xl border border-gray-200">
-//         <h2 className="text-4xl font-bold mb-8 text-center text-[#D23166]">Login to Nestify</h2>
-
-//         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-
-//         <form onSubmit={handleLogin} className="space-y-5">
-//           <Input
-//             label="Email"
-//             type="email"
-//             value={email}
-//             onChange={(e) => setEmail(e.target.value)}
-//             required
-//           />
-
-//           <div>
-//             <Input
-//               label="Password"
-//               type={showPassword ? 'text' : 'password'}
-//               value={password}
-//               onChange={(e) => setPassword(e.target.value)}
-//               required
-//             />
-//             <div className="text-sm text-right mt-1">
-//               <button
-//                 type="button"
-//                 onClick={() => setShowPassword(!showPassword)}
-//                 className="text-[#D23166] hover:underline"
-//               >
-//                 {showPassword ? 'Hide Password' : 'Show Password'}
-//               </button>
-//             </div>
-//           </div>
-
-//           <Button type="submit" className="w-full bg-[#D23166] hover:bg-[#bb1c55] text-white py-2 rounded-md">
-//             Login
-//           </Button>
-//         </form>
-
-//         <div className="text-center mt-4">
-//           <Link to="/forgot-password" className="text-sm text-[#D23166] hover:underline">
-//             Forgot Password?
-//           </Link>
-//         </div>
-//         <div className="text-center mt-3">
-//           <span className="text-sm text-gray-600">Don’t have an account? </span>
-//           <Link to="/signup" className="text-sm text-[#D23166] font-medium hover:underline">
-//             Sign up
-//           </Link>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Login;

@@ -6,6 +6,7 @@ import { UserProtected } from '../components/user/UserProtected';
 import Signup from '../pages/user/SignUp';
 
 
+
 export const routes = (
 
     <>
@@ -17,7 +18,6 @@ export const routes = (
             <Route path="/" element={<Home />} />
         </Route>
          <Route path="/signup" element={<Signup />} />
-        {/*<Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} /> */}
+        {/* <Route path="/reset-password" element={<ResetPassword />} /> */}
     </>
 );

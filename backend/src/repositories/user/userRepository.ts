@@ -51,6 +51,27 @@ class UserRepository implements IUserRepositoryInterface {
     }
   }
 
+   async updatePassword(userId: string, hashedPassword: string): Promise<void> {
+    try {
+      const user = await User.findById(userId)
+      if (user) {
+        user.password = hashedPassword;
+        await user.save();
+      } else {
+        throw new Error('User not found');
+      }
+    } catch (error) {
+      throw new Error('Error updating password');
+    }
+  }
+
+  // async findAll(skip:number,limit:number): Promise<any[]> {
+  //  return await User.find().skip(skip).limit(limit).exec()
+  // }
+  async countAll(): Promise<number> {
+    return await User.countDocuments();
+  }
+
   // async create(userData: any) {
   //   const user = new this.model(userData);
   //   return user.save();
