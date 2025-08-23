@@ -5,7 +5,7 @@ import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 import { AppError } from "../../utils/AppError";
 import { HttpStatus } from "../../constants/HttpStatus";
 import { MessageConstants } from "../../constants/MessageConstants";
-import { IUser } from "../../models/userModel";
+import { IUser } from "../../models/user/userModel";
 import { Signup } from "../../interfaces/user/SignUpInterface";
 import { googleUserData } from "../../Types/types";
 import { generateOtp, hashOtp } from "../../utils/generateOtp";

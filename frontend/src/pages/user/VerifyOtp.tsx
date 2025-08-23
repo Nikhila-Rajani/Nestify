@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import type { OtpModalProps } from '../../Types/otpType';
 import { useDispatch } from 'react-redux';
 import { resendOtp, verifyOtp } from '../../Api/userApi';
-import Input from '../../components/Input';
-import Button from '../../components/Button';
+import Input from '../../components/CommonComponents/Input';
+import Button from '../../components/CommonComponents/Button';
 import { RefreshCw } from 'lucide-react';
 
 

@@ -1,14 +1,15 @@
 import mongoose from 'mongoose';
-import User, { IUser } from '../../models/userModel';
+import User, { IUser } from '../../models/user/userModel';
 import { IUserRepositoryInterface } from '../../interfaces/user/IuserRepositoryInterface';
 import { googleUserData } from '../../Types/types';
+import { BaseRepository } from '../common/BaseRepository';
 
 
-class UserRepository implements IUserRepositoryInterface {
+class UserRepository extends BaseRepository <IUser> implements IUserRepositoryInterface {
 
 
   constructor() {
-
+    super(User)
   }
 
   async findByEmail(email: string): Promise<IUser | null> {
@@ -72,19 +73,28 @@ class UserRepository implements IUserRepositoryInterface {
     return await User.countDocuments();
   }
 
-  // async create(userData: any) {
-  //   const user = new this.model(userData);
-  //   return user.save();
-  // }
+    async findById(userId: string): Promise<IUser | null> {
+    try {
+      // Search for the user by ID
+      const user = await User.findById(userId).exec();
+      
+ 
+      if (!user) {
+        return null;
+      }
+      
+ 
+      return user;
+    } catch (error) {
+      console.error('Error finding user by ID:', error);
+      throw new Error('Error finding user');
+    }
+  }
 
-  // async update(email: string, updateData: any) {
-  //   return this.model.findOneAndUpdate({ email }, updateData, { new: true }).lean();
-  // }
+    async save(user:IUser):Promise<IUser>{
+    return await user.save()
+  }
 
-  // async findAll() { 
-  //   const users = await this.model.find().lean(); 
-  //   return users as any[]; 
-  // }
 }
 
 export default UserRepository;

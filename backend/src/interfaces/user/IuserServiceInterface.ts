@@ -1,4 +1,4 @@
-import { IUser } from "../../models/userModel";
+import { IUser } from "../../models/user/userModel";
 import { ForgotPasswordResponse } from "../../services/user/userService";
 import { googleUserData } from "../../Types/types";
 
@@ -18,6 +18,7 @@ export interface IUserServiceInterface {
     email: string,
     newPassword: string
   ): Promise<{ success: boolean; message: string }>;
+  
 
 }
 

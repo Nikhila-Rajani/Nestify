@@ -15,5 +15,10 @@ export const MessageConstants = {
     ID_TOKEN_REQUIRED : "Id token required",
     GOOGLE_SIGNIN_SUCCESS : "Google SignIn success",
     GOOGLE_SIGNIN_FAILED : "Google SignIn Failed",
-    LOGIN_FAILED : "Login Failed"
+    LOGIN_FAILED : "Login Failed",
+    LOGOUT_SUCCESS :"Logout successfull",
+    ALL_USERS_RETRIEVED : "All users retrieved",
+    USER_ID_REQUIRED : "User Id is required",
+    USER_BLOCKED : "User is Blocked",
+    USER_UNBLOCKED : "User is Unblocked"
 }

@@ -4,6 +4,7 @@ import { UserService } from '../services/user/userService';
 import UserRepository from '../repositories/user/userRepository';
 import express,{ Router, Request, Response } from 'express';
 import { OtpRepository } from '../repositories/common/otpRepository';
+import blockedUserMiddleware from '../middlewares/blockedUserMiddleware';
 
 
 
@@ -13,7 +14,7 @@ const otpRepository = new OtpRepository()
 const userService = new UserService(userRepository,otpRepository)
 const userController = new UserController(userService)
 
-userRoute.post('/login',(req:Request,res:Response) =>{
+userRoute.post('/login',blockedUserMiddleware,(req:Request,res:Response) =>{
   userController.login(req,res)
 })
 userRoute.post('/signUp',(req:Request,res:Response)=>{

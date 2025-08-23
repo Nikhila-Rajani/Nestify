@@ -37,3 +37,14 @@ export interface IGoogleSignInResponse {
   message: string;
   data: IUser;
 }
+
+export interface IAxiosError {
+    response?: {
+      status: any;
+      data?: {
+        message?: string;
+        error?:any
+      };
+
+    };
+  }

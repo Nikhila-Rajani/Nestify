@@ -6,7 +6,7 @@ import type { ISignupFormInputs } from '../../Types/authTypes';
 import { useForm, Controller } from 'react-hook-form'
 import { useDispatch } from 'react-redux';
 import { registerUser, sendOtp } from '../../Api/userApi';
-import Button from '../../components/Button';
+import Button from '../../components/CommonComponents/Button';
 import { Eye, EyeOff } from 'lucide-react';
 import VerifyOTP from './VerifyOtp';
 

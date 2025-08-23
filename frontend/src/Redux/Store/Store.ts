@@ -5,6 +5,7 @@ import {persistReducer , persistStore} from 'redux-persist'
 import { configureStore, type ThunkDispatch } from "@reduxjs/toolkit"
 import storage from 'redux-persist/lib/storage'
 import otpReducer from '../Otp/OtpSlice'
+import adminReducer from '../admin/adminSlice'
 
 const persistConfig = {
     key : "root",
@@ -14,7 +15,8 @@ const persistConfig = {
 
 const rootReducer = combineReducers ({
     user : userReducer,
-    otp  : otpReducer
+    otp  : otpReducer,
+    admin : adminReducer
 })
 
 const persistedReducer = persistReducer(persistConfig,rootReducer)
