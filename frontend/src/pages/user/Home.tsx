@@ -1,43 +1,30 @@
-// src/pages/Home.tsx
-import { useNavigate } from 'react-router-dom';
-import api from '../../axios/userInstances';
-import { useDispatch } from 'react-redux';
-import { logoutUser } from '../../Redux/User/userSlice';
+"use client"
+import type React from "react"
+import { motion } from "framer-motion"
+import Navbar from "../../components/user/Home/NavBar"
+import Hero from "../../components/user/Home/Hero"
+import Inspiration from "../../components/user/Home/Insptration"
+import Experiences from "../../components/user/Home/Experiences"
+import Hosting from "../../components/user/Home/Hosting"
+import Footer from "../../components/user/Home/Footer"
 
 
-const Home = () => {
-  const navigate = useNavigate();
-
-  const dispatch = useDispatch()
-  const handleLoginClick = () => {
-    navigate('/login');
-  };
-  const handleLogout = async () => {
-    try {
-      await api.post("/logout");
-      dispatch(logoutUser());
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
+const UserHomePage: React.FC = () => {
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-3xl font-bold mb-6">Welcome to Nestify</h1>
-      <button
-        onClick={handleLoginClick}
-        className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-      >
-        Login
-      </button>
-      <button
-        onClick={handleLogout}
-        className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-      >
-        LogOut
-      </button>
-    </div>
-  );
-};
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-white"
+    >
+      <Navbar />
+      <Hero />
+      <Inspiration />
+      <Experiences />
+      <Hosting />
+      <Footer />
+    </motion.div>
+  )
+}
 
-export default Home;
+export default UserHomePage

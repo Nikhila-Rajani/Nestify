@@ -8,6 +8,7 @@ import AdminLogin from '../pages/admin/AdminLogin';
 import AdminDashBoard from '../pages/admin/AdimnDashboard';
 import AdminLayOut from '../components/admin/AdminLayOut';
 import UserList from '../pages/admin/UserList';
+import HostHome from '../pages/host/HostHome';
 
 
 
@@ -30,6 +31,9 @@ export const routes = (
         <Route  element = {<AdminLayOut/>}   >
         <Route path='/admin/users' element= {<UserList/>} />
         </Route>
+
+        {/* Host */}
+        <Route path="/host" element={<HostHome />} />
 
     </>
 );
