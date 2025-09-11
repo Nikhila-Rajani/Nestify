@@ -13,7 +13,6 @@ import CancelConfirmationModal from "../../components/CommonComponents/CancelCon
 import useFetchData from "../../Hooks/useFetchData"
 import { blockUser, fetchUser } from "../../Api/adminApi"
 
-
 const UserList: React.FC = () => {
   const [page, setPage] = useState<number>(1)
   const [searchTerm, setSearchTerm] = useState<string>("")
@@ -29,7 +28,6 @@ const UserList: React.FC = () => {
   )
 
   const { data, loading, error, refetch } = useFetchData(fetchUserCallback)
-console.log("Dataaa",data);
 
   const users = data?.users || []
   const total = data?.total || 0
@@ -77,21 +75,16 @@ console.log("Dataaa",data);
   }
 
   if (loading) return <Loader />
-
   if (error) return <ErrorDisplay error={error} />
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {/* <div className="w-64 flex-shrink-0">
-        <AdminSidebar />
-      </div> */}
-
+    <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-red-50">
       <div className="flex-1 p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
           {/* Header Section */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-blue-600 rounded-lg">
+              <div className="p-2 bg-red-500 rounded-lg">
                 <Users className="w-6 h-6 text-white" />
               </div>
               <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
@@ -107,8 +100,8 @@ console.log("Dataaa",data);
                   <p className="text-sm font-medium text-gray-600">Total Users</p>
                   <p className="text-2xl font-bold text-gray-900">{total}</p>
                 </div>
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <Users className="w-6 h-6 text-blue-600" />
+                <div className="p-3 bg-red-100 rounded-lg">
+                  <Users className="w-6 h-6 text-red-600" />
                 </div>
               </div>
             </div>
@@ -150,7 +143,7 @@ console.log("Dataaa",data);
                     placeholder="Search by name or email..."
                     value={searchTerm}
                     onChange={handleSearchChange}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white"
                   />
                 </div>
 
@@ -162,7 +155,7 @@ console.log("Dataaa",data);
                       setIsBlockedFilter(e.target.value)
                       setPage(1)
                     }}
-                    className="pl-10 pr-8 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white min-w-[160px] appearance-none cursor-pointer"
+                    className="pl-10 pr-8 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 bg-white min-w-[160px] appearance-none cursor-pointer"
                   >
                     <option value="all">All Users</option>
                     <option value="active">Active Only</option>
@@ -180,10 +173,8 @@ console.log("Dataaa",data);
                   data={users}
                   actions={(user) => (
                     <TableActions
-                      
                       onBlock={() => handleBlockUser(user._id, !user.isBlocked)}
                       isBlocked={user.isBlocked}
-                      // onViewDetails={() => {}}
                       verificationStatus=""
                     />
                   )}

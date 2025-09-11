@@ -9,6 +9,7 @@ import AdminDashBoard from '../pages/admin/AdimnDashboard';
 import AdminLayOut from '../components/admin/AdminLayOut';
 import UserList from '../pages/admin/UserList';
 import HostHome from '../pages/host/HostHome';
+import HostRequest from '../components/host/HostRequestForm';
 
 
 
@@ -34,6 +35,7 @@ export const routes = (
 
         {/* Host */}
         <Route path="/host" element={<HostHome />} />
+        <Route path="/become-host" element={<HostRequest />} />
 
     </>
 );

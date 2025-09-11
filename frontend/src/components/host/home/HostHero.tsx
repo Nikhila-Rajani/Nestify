@@ -1,16 +1,12 @@
 import React from "react"
 import { motion } from "framer-motion"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import { useSelector } from "react-redux"
 import type { RootState } from "../../../Redux/Store/Store"
 
 const HostHero: React.FC = () => {
   const navigate = useNavigate()
   const user = useSelector((state: RootState) => state.user.user)
-
-  const handleBecomeHost = () => {
-    navigate("/become-host")
-  }
 
   // Simple smooth fade + zoom
   const fadeIn = {
@@ -47,15 +43,14 @@ const HostHero: React.FC = () => {
           Go to Dashboard
         </motion.button>
       ) : (
-        <motion.button
-          variants={fadeIn}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={handleBecomeHost}
-          className="bg-white text-red-500 px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-gray-100"
-        >
-          Become a Host
-        </motion.button>
+        <motion.div variants={fadeIn} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
+          <Link
+            to="/become-host"
+            className="bg-white text-red-500 px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-gray-100 inline-block"
+          >
+            Become a Host
+          </Link>
+        </motion.div>
       )}
     </motion.section>
   )
