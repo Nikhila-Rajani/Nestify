@@ -58,10 +58,10 @@ const HostRequest: React.FC = () => {
     console.log("Submitted Data:", formData)
   }
 
-  const fadeUp = {
-    hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-  }
+  // const fadeUp = {
+  //   hidden: { opacity: 0, y: 40 },
+  //   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  // }
 
   // 🟠 List of amenities with labels + icons
   const amenitiesList = [
@@ -79,12 +79,12 @@ const HostRequest: React.FC = () => {
     <motion.div
       initial="hidden"
       animate="visible"
-      variants={fadeUp}
+      // variants={fadeUp}
       className="min-h-screen bg-gradient-to-br from-red-500 via-orange-400 to-yellow-300 flex items-center justify-center py-10 px-4"
     >
       <motion.form
         onSubmit={handleSubmit}
-        variants={fadeUp}
+        // variants={fadeUp}
         className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-3xl space-y-6"
       >
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-4">

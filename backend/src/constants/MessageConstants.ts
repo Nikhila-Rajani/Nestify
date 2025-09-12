@@ -20,5 +20,6 @@ export const MessageConstants = {
     ALL_USERS_RETRIEVED : "All users retrieved",
     USER_ID_REQUIRED : "User Id is required",
     USER_BLOCKED : "User is Blocked",
-    USER_UNBLOCKED : "User is Unblocked"
+    USER_UNBLOCKED : "User is Unblocked",
+    SEND_HOST_REQUEST : "Request sent"
 }
